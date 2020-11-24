@@ -1,0 +1,29 @@
+name: build-aws-image
+
+on: [push]
+
+# TODO: use this instead
+# https://github.com/marketplace/actions/configure-aws-credentials-action-for-github-actions
+# also consider rotating keys
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: install awscli
+      id: install-aws
+      run: sudo apt install awscli
+      
+    - name: Configure aws-cli
+      run: aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY }}
+      run: aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: aws configure set region $AWS_REGION
+
+    - name: Run builder
+      run: $GITHUB_WORKSPACE/scripts/aws-image.sh
