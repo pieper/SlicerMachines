@@ -1,0 +1,10 @@
+[Desktop Entry]
+Exec=/usr/local/bin/Slicer
+Icon=/opt/slicer/3D-Slicer.svg
+Terminal=false
+Name=3D Slicer
+Comment=Launch an instance of 3D Slicer
+Type=Application
+Categories=X-Xfce-Toplevel;
+X-Ubuntu-Gettext-Domain=slicer
+
