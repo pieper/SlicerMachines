@@ -25,7 +25,7 @@ for a VM instance.
 * Run a Slicelet as a service
 * Bring up as many machines as needed to run jobs in parallel
 
-## This code goals
+## The goal of these scripts
 Automate the process of configuring and publishing the disk image
 so that new versions of the OS, Slicer, and various extensions
 can be easily created and made avalailable.
