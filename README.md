@@ -15,6 +15,16 @@ via nvc.
 The result is an AMI in AWS that can be used as the boot image
 for a VM instance.
 
+## Use cases
+* Start up consistent GPU-enabled application environments
+* Set up consistent state for testing
+* Set up identical machines for training
+* To access high-performance computers multicore/multi-GPU/large memory
+* Pre-load a machine with data so that users can jump on and start working
+* Run Slicer as a compute or render server
+* Run a Slicelet as a service
+* Bring up as many machines as needed to run jobs in parallel
+
 ## This code goals
 Automate the process of configuring and publishing the disk image
 so that new versions of the OS, Slicer, and various extensions
