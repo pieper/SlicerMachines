@@ -44,3 +44,25 @@ can be easily created and made avalailable.
 ## Supported by
 * NSF Advances in Biological Informatics Collaborative grant to ABI-1759883
 * NIH NIMH 5R01MH119222-02 Harmonizing multi-site diffusion mri acquisitions for neuroscientific analysis across ages and brain disorders
+
+# Usage
+
+## Making an image
+* Install and configure `aws cli` on your account
+* Configure the variables at the top of `scripts/aws-image.sh`
+** `KEY` is your personal security key registered with AWS
+** `SLICER_EXTS` is a list of Slicer extensions to install.  Be sure to list all dependencies in reverse order or the install process will stall with a permission dialog.
+* Run the script and a machine image will be created in about 10 minutes.
+
+## Using an image
+
+An example pulic AMI created with this script is: ami-09c0ee62c398960e7
+
+Use it as the boot image for a machine like a `g3.4xlarge` (other g3 GPU machines should workas well).  Machines take about a minute to boot.  Be sure to request a public IP.
+
+Once you have the machine running with a public IP you can run this to tunnel the vnc connection with whatever PEM you used and IP AWS provided.  Tunnel port 6080 as in the following example:
+```
+ssh -i /Users/pieper/.ssh/condatest.pem ubuntu@54.167.32.251 -L 5432:localhost:6080
+```
+
+Then connect to `localhost:5432`
