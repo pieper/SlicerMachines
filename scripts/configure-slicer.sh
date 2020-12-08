@@ -1,10 +1,10 @@
 
-echo ${KEY}
-echo ${IP}
-echo ${SLICER_EXTS}
+echo export KEY=${KEY}
+echo export IP=${IP}
+echo export SLICER_EXTS=${SLICER_EXTS}
 
-echo -n waiting for X server to start
-while ! xset -d :0 -q &> /dev/null
+echo -n "waiting for X server to start"
+while ! ssh -i ${KEY} ubuntu@${IP} xset -d :0 -q &> /dev/null
 do
   echo -n .
   sleep 1
@@ -29,7 +29,7 @@ do
   echo "Installing ${ext}"
   ssh -i ${KEY} ubuntu@${IP} \
     DISPLAY=:0 \
-    EXTENSION_TO_INSTALL=SlicerMorph \
+    EXTENSION_TO_INSTALL=${ext} \
       Slicer --python-script /tmp/install.py
 done
 

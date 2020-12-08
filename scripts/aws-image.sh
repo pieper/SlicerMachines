@@ -4,7 +4,7 @@ KEY_NAME=condatest
 KEY=~/.ssh/${KEY_NAME}.pem
 
 UBUNTU_2004_IMAGE_ID=ami-0885b1f6bd170450c
-SLICER_EXTS="Auto3dgm SegmentEditorExtraEffects Sandbox SlicerIGT RawImageGuess SlicerDcm2nii SurfaceWrapSolidify SlicerMorph"
+SLICER_EXTS="MarkupsToModel Auto3dgm SegmentEditorExtraEffects Sandbox SlicerIGT RawImageGuess SlicerDcm2nii SurfaceWrapSolidify SlicerMorph"
 
 BUILD_DATE=$(date -u "+%Y-%0m-%0d-%0H.%0M.%0S")
 
@@ -70,8 +70,22 @@ configure_start_time="$(date -u +%s)"
 # turn off host checking so that host key will be automatically recorded (no prompt)
 ssh -o StrictHostKeyChecking=no -i ${KEY} ubuntu@${IP} echo login works
 
-scp -i ${KEY} scripts/configure-ubuntu.sh ubuntu@${IP}:/home/ubuntu/configure-ubuntu.sh
-ssh -i ${KEY} ubuntu@${IP} sudo /home/ubuntu/configure-ubuntu.sh
+# run the first round of installs
+scp -i ${KEY} scripts/configure-ubuntu-phase-1.sh ubuntu@${IP}:/home/ubuntu/configure-ubuntu-phase-1.sh
+ssh -i ${KEY} ubuntu@${IP} sudo /home/ubuntu/configure-ubuntu-phase-1.sh
+
+# reboot the instance so nvidia driver sees GPU
+ssh -i ${KEY} ubuntu@${IP} sudo reboot
+echo "waiting for reboot"
+while ! ssh -i ${KEY} ubuntu@${IP} -o ConnectTimeout=1 echo ready &> /dev/null
+do
+  echo -n .
+  sleep 1
+done
+
+# run second round of installs
+scp -i ${KEY} scripts/configure-ubuntu-phase-2.sh ubuntu@${IP}:/home/ubuntu/configure-ubuntu-phase-2.sh
+ssh -i ${KEY} ubuntu@${IP} sudo /home/ubuntu/configure-ubuntu-phase-2.sh
 
 ( export KEY=${KEY} \
          IP=${IP} \
