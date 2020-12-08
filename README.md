@@ -35,7 +35,7 @@ can be easily created and made avalailable.
 * support various Slicer Solution targets, like SlicerMorph, SlicerDMRI, etc.
 * include a useful ecosystem of other tools preloaded (R, Blender, etc).
 * consider creating the images on a regular basis so users can get access to the latest code
-* create a simple front-end for users to boot, access, and manage their VM instances
+* create a simple front-end for users to boot, securely access, and manage their VM instances
 
 ## Earlier work
 * https://github.com/QIICR/SlicerGCPSetup
@@ -65,4 +65,4 @@ Once you have the machine running with a public IP you can run this to tunnel th
 ssh -i /Users/pieper/.ssh/condatest.pem ubuntu@54.167.32.251 -L 5432:localhost:6080
 ```
 
-Then connect to `localhost:5432`
+Then connect to `localhost:5432` in your browser
