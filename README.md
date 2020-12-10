@@ -23,6 +23,7 @@ for a VM instance.
 * Pre-load a machine with data so that users can jump on and start working
 * Run Slicer as a compute or render server
 * Run a Slicelet as a service
+* Bring up a back-end for a jupyter notebook
 * Bring up as many machines as needed to run jobs in parallel
 
 ## The goal of these scripts
