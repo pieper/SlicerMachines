@@ -67,3 +67,7 @@ ssh -i /Users/pieper/.ssh/condatest.pem ubuntu@54.167.32.251 -L 5432:localhost:6
 ```
 
 Then connect to `localhost:5432` in your browser
+
+## Troubleshooting
+
+If the connection hangs you can try running `sudo systemctl restart slicerX` and `sudo systemctl restart slicer`
