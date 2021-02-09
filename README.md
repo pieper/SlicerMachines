@@ -55,6 +55,16 @@ can be easily created and made avalailable.
 ** `SLICER_EXTS` is a list of Slicer extensions to install.  Be sure to list all dependencies in reverse order or the install process will stall with a permission dialog.
 * Run the script and a machine image will be created in about 10 minutes.
 
+### Keeping a log for debug
+A command linke the following is suggested:
+```
+ ./scripts/gcp-image.sh 2>&1 | tee gcp-log-$(date +%s)
+```
+or
+```
+ ./scripts/aws-image.sh 2>&1 | tee gcp-log-$(date +%s)
+```
+
 ## Using an image
 
 An example pulic AMI created with this script is: ami-09c0ee62c398960e7

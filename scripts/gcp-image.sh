@@ -1,36 +1,25 @@
 #!/bin/bash
 
-KEY_NAME=condatest
-KEY=~/.ssh/${KEY_NAME}.pem
-
-
-UBUNTU_2004_IMAGE_ID=ami-0885b1f6bd170450c
 SLICER_EXTS="MarkupsToModel Auto3dgm SegmentEditorExtraEffects Sandbox SlicerIGT RawImageGuess SlicerDcm2nii SurfaceWrapSolidify SlicerMorph"
 
-BUILD_DATE=$(date +%s)
+INSTANCE_ID=slicermachine-$(date +%s)
+SSH="gcloud compute ssh ${INSTANCE_ID} --"
+SCP="gcloud compute scp"
+SCPHOST=${INSTANCE_ID}
 
-echo "Creating new Slicer image based on ${UBUNTU_2004_IMAGE_ID}"
-
+echo "Creating new Slicer gcp image"
 
 #
 # create the instance
 #
 
-INSTANCE_ID=$( \
-  aws ec2 run-instances \
-    --image-id ${UBUNTU_2004_IMAGE_ID} \
-    --count 1 \
-    --instance-type g3.4xlarge \
-    --key-name condatest \
-    --security-group-ids sg-06c97de13d2908d9c \
-    --subnet-id subnet-09b413c8209761938 \
-    --associate-public-ip-address \
-  | jq -r ".Instances[0].InstanceId")
-
-INSTANCE_NAME=SlicerMachine-${BUILD_DATE}
-aws ec2 create-tags \
-  --resources ${INSTANCE_ID} \
-  --tags Key=Name,Value=${INSTANCE_NAME}
+gcloud compute instances create \
+  ${INSTANCE_ID} \
+  --image-project ubuntu-os-cloud \
+  --image-family ubuntu-2004-lts \
+  --machine-type n1-standard-8 \
+  --accelerator=type=nvidia-tesla-k80,count=1 \
+  --maintenance-policy TERMINATE
 
 echo Started ${INSTANCE_ID}
 
@@ -42,7 +31,7 @@ echo Started ${INSTANCE_ID}
 status_start_time="$(date -u +%s)"
 
 echo -n waiting for instance to start
-while [ $(aws ec2 describe-instance-status --instance-ids ${INSTANCE_ID} | jq -r ".InstanceStatuses[0].SystemStatus.Status") != "ok" ]
+while ! ${SSH} -o ConnectTimeout=1 echo ready &> /dev/null
 do
   echo -n .
   sleep 1
@@ -56,23 +45,10 @@ echo "Instance started in $status_elapsed seconds"
 
 
 #
-# get the ip address
-#
-
-IP=$(aws ec2 describe-instances --instance-ids ${INSTANCE_ID} | jq -r ".Reservations[0].Instances[0].PublicIpAddress")
-
-SSH="ssh -i ${KEY} ubuntu@${IP}"
-SCP="scp -i ${KEY}"
-SCPHOST=ubuntu@${IP}
-
-#
 # run the configure script
 #
 
 configure_start_time="$(date -u +%s)"
-
-# turn off host checking so that host key will be automatically recorded (no prompt)
-${SSH} -o StrictHostKeyChecking=no echo login works
 
 # run the first round of installs
 ${SCP} scripts/configure-ubuntu-phase-1.sh ${SCPHOST}:configure-ubuntu-phase-1.sh
@@ -98,12 +74,11 @@ ${SSH} sudo /bin/bash ./configure-ubuntu-phase-2.sh
   ./scripts/configure-slicer.sh
 )
 
-${SCP} resources/.xscreensaver ${SCPHOST}:/home/ubuntu/.xscreensaver
+${SCP} resources/.xscreensaver ${SCPHOST}:.xscreensaver
 
 configure_end_time="$(date -u +%s)"
 configure_elapsed="$(($configure_end_time-$configure_start_time))"
 echo "Instance configured in $configure_elapsed seconds"
-
 
 #
 # make the machine image
@@ -111,21 +86,15 @@ echo "Instance configured in $configure_elapsed seconds"
 
 make_image_start_time="$(date -u +%s)"
 
-SLICER_IMAGE_ID=$( \
-  aws ec2 create-image \
-    --description "Slicer desktop with nvidia driver" \
-    --name "SlicerMachine"-${BUILD_DATE} \
-    --instance-id ${INSTANCE_ID} \
-    | jq -r ".ImageId")
+gcloud compute instances stop ${INSTANCE_ID}
 
-SLICER_IMAGE_NAME=SlicerMachineImage-${BUILD_DATE}
-aws ec2 create-tags \
-  --resources ${SLICER_IMAGE_ID} \
-  --tags Key=Name,Value=${SLICER_IMAGE_NAME}
-echo Created ${SLICER_IMAGE_ID} from ${INSTANCE_ID} as ${SLICER_IMAGE_NAME}
+gcloud compute images create ${INSTANCE_ID} \
+  --source-disk=${INSTANCE_ID} \
+  --family=slicer \
+  --storage-location=us
 
 echo -n waiting for image to build
-while [ $(aws ec2 describe-images --image-ids ${SLICER_IMAGE_ID} | jq -r ".Images[0].State") != "available" ]
+while [ $(gcloud compute images describe --format json ${INSTANCE_ID} | jq -r ".status") == "PENDING" ]
 do
   echo -n .
   sleep 1
@@ -142,4 +111,4 @@ echo "Instance started in ${status_elapsed} seconds"
 echo "Instance configured in ${configure_elapsed} seconds"
 echo "Instance image started in ${make_image_elapsed} seconds"
 echo
-echo Image name is: ${SLICER_IMAGE_ID}
+echo Image name is: ${INSTANCE_ID}
