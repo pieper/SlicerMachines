@@ -7,7 +7,8 @@ KEY=~/.ssh/${KEY_NAME}.pem
 UBUNTU_2004_IMAGE_ID=ami-0885b1f6bd170450c
 SLICER_EXTS="MarkupsToModel Auto3dgm SegmentEditorExtraEffects Sandbox SlicerIGT RawImageGuess SlicerDcm2nii SurfaceWrapSolidify SlicerMorph"
 
-BUILD_DATE=$(date +%s)
+BUILD_DATE=$(date +%Ft%H-%I-%M)
+
 
 echo "Creating new Slicer image based on ${UBUNTU_2004_IMAGE_ID}"
 
