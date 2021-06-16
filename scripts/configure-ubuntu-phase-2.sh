@@ -85,6 +85,22 @@ WantedBy=multi-user.target
 EOF
 systemctl enable mwm
 
+# run xfce4-session - not currently working with vnc due to display manager issue
+cat << EOF > /etc/systemd/system/xfce4-session.service
+[Unit]
+Description="xfce4"
+After=slicerX.service
+
+[Service]
+ExecStart=/usr/bin/xfce4-session --display :0
+User=ubuntu
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl disable xfce4-session
+
 # resize screen
 cat << EOF > /etc/systemd/system/resize-screen.service
 [Unit]
@@ -100,7 +116,7 @@ Type=oneshot
 [Install]
 WantedBy=multi-user.target
 EOF
-systemctl enable resize-screen
+# systemctl enable resize-screen
 
 # install Slicer
 mkdir /opt/slicer
@@ -108,6 +124,7 @@ cd /opt/slicer
 wget --quiet "https://download.slicer.org/bitstream/1341035" -O Slicer-4.11.20200930-linux-amd64.tar.gz
 tar xfz Slicer-4.11.20200930-linux-amd64.tar.gz
 ln -s /opt/slicer/Slicer-4.11.20200930-linux-amd64/Slicer /usr/local/bin/Slicer
+ln -s /opt/slicer/Slicer-4.11.20200930-linux-amd64/Slicer /usr/local/bin/slicer
 
 # run slicer
 cat << EOF > /etc/systemd/system/slicer.service
