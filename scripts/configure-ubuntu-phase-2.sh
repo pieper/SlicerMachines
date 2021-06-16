@@ -5,7 +5,7 @@ GPU_BUS_ID=$(nvidia-xconfig --query-gpu-info | grep PCI | awk 'NF{ print $NF }')
 cp /etc/X11/xorg.conf /etc/X11/xorg.conf.no-gpu
 sed -i "/.*NVIDIA Corporation.*/a\ \ \ \ BusID          \"${GPU_BUS_ID}\""  /etc/X11/xorg.conf
 sed -i "/.* Depth .*/a\ \ \ \ \ \ \ \ Modes      \"1900x1200\""  /etc/X11/xorg.conf
-sed -i "/.* Modes .*/a\ \ \ \ \ \ \ \ Virtual      1900 1200"  /etc/X11/xorg.conf
+sed -i "/.* Modes .*/a\ \ \ \ \ \ \ \ Virtual     2560 1600"  /etc/X11/xorg.conf
 
 
 # install slicerX
