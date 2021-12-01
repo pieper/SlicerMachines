@@ -94,9 +94,10 @@ EOF
 systemctl enable resize-screen
 
 # install Slicer
+SLICER_URL=https://download.slicer.org/bitstream/60add706ae4540bf6a89bf98
 mkdir /opt/slicer
 cd /opt/slicer
-wget --quiet "https://download.slicer.org/bitstream/1341035" -O Slicer-4.11.20200930-linux-amd64.tar.gz
+wget --quiet ${SLICER_URL} -O Slicer-4.11.20200930-linux-amd64.tar.gz
 tar xfz Slicer-4.11.20200930-linux-amd64.tar.gz
 ln -s /opt/slicer/Slicer-4.11.20200930-linux-amd64/Slicer /usr/local/bin/Slicer
 ln -s /opt/slicer/Slicer-4.11.20200930-linux-amd64/Slicer /usr/local/bin/slicer
