@@ -7,7 +7,6 @@ sed -i "/.*NVIDIA Corporation.*/a\ \ \ \ BusID          \"${GPU_BUS_ID}\""  /etc
 sed -i "/.* Depth .*/a\ \ \ \ \ \ \ \ Modes      \"1900x1200\""  /etc/X11/xorg.conf
 sed -i "/.* Modes .*/a\ \ \ \ \ \ \ \ Virtual     2560 1600"  /etc/X11/xorg.conf
 
-
 # install slicerX
 cat << EOF > /etc/X11/Xwrapper.config
 allowed_users = anybody
@@ -32,7 +31,7 @@ systemctl enable slicerX
 cat << EOF > /etc/systemd/system/x11vnc.service
 [Unit]
 Description="x11vnc"
-After=syslog.target network.target
+After=slicerX.service
 
 [Service]
 ExecStart=/usr/bin/x11vnc -forever -display :0
@@ -68,38 +67,14 @@ EOF
 systemctl enable novnc
 
 
-# run mwm
-apt-get install -q -y mwm
-cat << EOF > /etc/systemd/system/mwm.service
-[Unit]
-Description="mwm"
-After=slicerX.service
-
-[Service]
-ExecStart=/usr/bin/mwm -d :0
-User=ubuntu
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
+# start window manager when X starts
+cat << EOF > /home/ubuntu/.xinitrc
+/usr/bin/xfce4-session
+Slicer
 EOF
-systemctl enable mwm
+chown ubuntu:ubuntu /home/ubuntu/.xinitrc
+chmod 644 /home/ubuntu/.xinitrc
 
-# run xfce4-session - not currently working with vnc due to display manager issue
-cat << EOF > /etc/systemd/system/xfce4-session.service
-[Unit]
-Description="xfce4"
-After=slicerX.service
-
-[Service]
-ExecStart=/usr/bin/xfce4-session --display :0
-User=ubuntu
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
-EOF
-systemctl disable xfce4-session
 
 # resize screen
 cat << EOF > /etc/systemd/system/resize-screen.service
@@ -116,7 +91,7 @@ Type=oneshot
 [Install]
 WantedBy=multi-user.target
 EOF
-# systemctl enable resize-screen
+systemctl enable resize-screen
 
 # install Slicer
 mkdir /opt/slicer
@@ -126,22 +101,6 @@ tar xfz Slicer-4.11.20200930-linux-amd64.tar.gz
 ln -s /opt/slicer/Slicer-4.11.20200930-linux-amd64/Slicer /usr/local/bin/Slicer
 ln -s /opt/slicer/Slicer-4.11.20200930-linux-amd64/Slicer /usr/local/bin/slicer
 
-# run slicer
-cat << EOF > /etc/systemd/system/slicer.service
-[Unit]
-Description="slicer session"
-After=slicerX.service
-
-[Service]
-Environment=DISPLAY=:0
-User=ubuntu
-ExecStart=/usr/local/bin/Slicer
-Type=oneshot
-
-[Install]
-WantedBy=multi-user.target
-EOF
-systemctl enable slicer
 
 # turn on slicer environment
 systemctl isolate multi-user.target
