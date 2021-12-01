@@ -13,7 +13,7 @@ apt-get install -q -y awscli
 
 apt-get -q -y update
 apt-get install -q -y ubuntu-drivers-common
-ubuntu-drivers autoinstall
+ubuntu-drivers install
 apt-get install -q -y xinit
 apt-get install -q -y x11vnc
 apt-get install -q -y xterm
