@@ -1,6 +1,7 @@
 #!/bin/bash
 
-SLICER_EXTS="MarkupsToModel Auto3dgm SegmentEditorExtraEffects Sandbox SlicerIGT RawImageGuess SlicerDcm2nii SurfaceWrapSolidify SlicerMorph"
+# SLICER_EXTS="MarkupsToModel Auto3dgm SegmentEditorExtraEffects Sandbox SlicerIGT RawImageGuess SlicerDcm2nii SurfaceWrapSolidify SlicerMorph"
+SLICER_EXTS=""
 
 INSTANCE_ID=slicermachine-$(date +%Ft%H-%I-%M)
 SSH="gcloud compute ssh ${INSTANCE_ID} --"
@@ -38,10 +39,9 @@ do
   echo -n .
   sleep 1
 done
-
+echo
 
 status_end_time="$(date -u +%s)"
-
 status_elapsed="$(($status_end_time-$status_start_time))"
 echo "Instance started in $status_elapsed seconds"
 
