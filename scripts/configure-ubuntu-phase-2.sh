@@ -1,13 +1,17 @@
 #!/bin/bash
 
+#
 # configure X to use the GPU
+#
 GPU_BUS_ID=$(nvidia-xconfig --query-gpu-info | grep PCI | awk 'NF{ print $NF }')
 cp /etc/X11/xorg.conf /etc/X11/xorg.conf.no-gpu
 sed -i "/.*NVIDIA Corporation.*/a\ \ \ \ BusID          \"${GPU_BUS_ID}\""  /etc/X11/xorg.conf
 sed -i "/.* Depth .*/a\ \ \ \ \ \ \ \ Modes      \"1900x1200\""  /etc/X11/xorg.conf
 sed -i "/.* Modes .*/a\ \ \ \ \ \ \ \ Virtual     2560 1600"  /etc/X11/xorg.conf
 
+#
 # install slicerX
+#
 cat << EOF > /etc/X11/Xwrapper.config
 allowed_users = anybody
 EOF
@@ -27,7 +31,9 @@ EOF
 systemctl enable slicerX
 
 
+#
 # install x11vnc
+#
 cat << EOF > /etc/systemd/system/x11vnc.service
 [Unit]
 Description="x11vnc"
@@ -44,7 +50,9 @@ EOF
 systemctl enable x11vnc
 
 
+#
 # install noVNC
+#
 mkdir /opt/novnc
 (cd /opt/novnc; git clone https://github.com/novnc/noVNC)
 (cd /opt/novnc/noVNC; git checkout v1.2.0)
@@ -67,7 +75,9 @@ EOF
 systemctl enable novnc
 
 
+#
 # start window manager when X starts
+#
 cat << EOF > /home/ubuntu/.xinitrc
 /usr/bin/xfce4-session
 Slicer
@@ -76,7 +86,9 @@ chown ubuntu:ubuntu /home/ubuntu/.xinitrc
 chmod 644 /home/ubuntu/.xinitrc
 
 
+#
 # resize screen
+#
 cat << EOF > /etc/systemd/system/resize-screen.service
 [Unit]
 Description="Resize screen"
@@ -93,16 +105,21 @@ WantedBy=multi-user.target
 EOF
 systemctl enable resize-screen
 
+
+#
 # install Slicer
+#
 SLICER_URL=https://download.slicer.org/bitstream/60add706ae4540bf6a89bf98
+SLICER_VERSION=Slicer-4.11.20210226-linux-amd64
 mkdir /opt/slicer
 cd /opt/slicer
-wget --quiet ${SLICER_URL} -O Slicer-4.11.20200930-linux-amd64.tar.gz
-tar xfz Slicer-4.11.20200930-linux-amd64.tar.gz
-ln -s /opt/slicer/Slicer-4.11.20200930-linux-amd64/Slicer /usr/local/bin/Slicer
-ln -s /opt/slicer/Slicer-4.11.20200930-linux-amd64/Slicer /usr/local/bin/slicer
+wget --quiet ${SLICER_URL} -O ${SLICER_VERSION}.tar.gz
+tar xfz ${SLICER_VERSION}.tar.gz
+ln -s /opt/slicer/${SLICER_VERSION}/Slicer /usr/local/bin/Slicer
+ln -s /opt/slicer/${SLICER_VERSION}/Slicer /usr/local/bin/slicer
 
 
+#
 # turn on slicer environment
+#
 systemctl isolate multi-user.target
-
