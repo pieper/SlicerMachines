@@ -103,10 +103,16 @@ do
 done
 echo ...done
 
-
 make_image_end_time="$(date -u +%s)"
 make_image_elapsed="$(($make_image_end_time-$make_image_start_time))"
 echo "Instance image made in $make_image_elapsed seconds"
+
+# 
+# make the image publicly accessible
+#
+gcloud compute images add-iam-policy-binding ${INSTANCE_ID} \
+    --member='allAuthenticatedUsers' \
+    --role='roles/compute.imageUser'
 
 echo deleting compute instance ${INSTANCE_ID}
 gcloud compute instances stop ${INSTANCE_ID}
