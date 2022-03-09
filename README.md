@@ -89,3 +89,13 @@ If the connection hangs you can try running `sudo systemctl restart slicerX` and
 ## TODO
 * Look at using Chrome Remote Desktop: https://cloud.google.com/solutions/chrome-desktop-remote-on-compute-engine
 * Consider pre-installing other software (R-Studio, machine learning libraries, chrome, etc)
+
+## Installing MONAILabel
+Example commands to experiment with [MONAILabel](https://github.com/Project-MONAI/MONAILabel).
+```
+sudo apt-get install python3-pip
+python3 -m pip install --upgrade pip setuptools wheel
+pip3 install torch==1.9.0+cu111 torchvision==0.10.0+cu111 torchaudio===0.9.0 -f https://download.pytorch.org/whl/torch_stable.html
+pip3 install git+https://github.com/Project-MONAI/MONAILabel#egg=monailabel
+
+```
