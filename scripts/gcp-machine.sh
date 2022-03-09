@@ -4,6 +4,10 @@ IMAGE_PROJECT=idc-sandbox-000
 IMAGE_FAMILY=slicer
 BILLING_PROJECT=idc-lnq-000
 
+# e.g.:
+# ACCELERATOR=type=nvidia-tesla-v100,count=2
+ACCELERATOR=type=nvidia-tesla-k80,count=1
+
 INSTANCE_ID=${USER}-slicermachine-$(date +%Ft%H-%I-%M)
 SSH="gcloud --project ${BILLING_PROJECT} compute ssh ${INSTANCE_ID} --"
 
@@ -19,7 +23,8 @@ status_start_time="$(date -u +%s)"
 gcloud compute --project ${BILLING_PROJECT} \
   instances create ${INSTANCE_ID} \
     --image-project=${IMAGE_PROJECT} --image-family=${IMAGE_FAMILY} \
-    --machine-type=n1-standard-8 --accelerator=type=nvidia-tesla-k80,count=1 \
+    --machine-type=n1-standard-8 \
+    --accelerator=${ACCELERATOR} \
     --boot-disk-size=200GB --boot-disk-type=pd-ssd --maintenance-policy=TERMINATE
 
 echo Created ${INSTANCE_ID}
