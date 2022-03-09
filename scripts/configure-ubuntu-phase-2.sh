@@ -111,12 +111,14 @@ systemctl enable resize-screen
 #
 SLICER_URL=https://download.slicer.org/bitstream/60add706ae4540bf6a89bf98
 SLICER_VERSION=Slicer-4.11.20210226-linux-amd64
-mkdir /opt/slicer
-cd /opt/slicer
+SLICER_DIR=/home/ubuntu/slicer
+mkdir ${SLICER_DIR}
+cd ${SLICER_DIR}
 wget --quiet ${SLICER_URL} -O ${SLICER_VERSION}.tar.gz
 tar xfz ${SLICER_VERSION}.tar.gz
-ln -s /opt/slicer/${SLICER_VERSION}/Slicer /usr/local/bin/Slicer
-ln -s /opt/slicer/${SLICER_VERSION}/Slicer /usr/local/bin/slicer
+chown -R ubuntu:ubuntu ${SLICER_DIR}
+ln -s ${SLICER_DIR}/${SLICER_VERSION}/Slicer /usr/local/bin/Slicer
+ln -s ${SLICER_DIR}/${SLICER_VERSION}/Slicer /usr/local/bin/slicer
 
 
 #
