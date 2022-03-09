@@ -27,13 +27,14 @@ apt-get -q -y remove gdm3
 apt-get -q -y install xfce4
 
 # somehow default browser is not available by default
-apt-get install firefox
+apt-get -q -y install firefox
 
 # install gcsfuse, just in case
 export GCSFUSE_REPO=gcsfuse-`lsb_release -c -s`
 echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-sudo apt-get install gcsfuse
+sudo apt-get update
+sudo apt-get -q -y install gcsfuse
 
 # turn off display manager
 systemctl set-default multi-user.target
