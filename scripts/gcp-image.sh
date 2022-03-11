@@ -103,6 +103,11 @@ do
 done
 echo ...done
 
+# make the image public
+gcloud compute images add-iam-policy-binding ${INSTANCE_ID} \
+  --member='allAuthenticatedUsers' \
+  --role='roles/compute.imageUser'
+
 
 make_image_end_time="$(date -u +%s)"
 make_image_elapsed="$(($make_image_end_time-$make_image_start_time))"
