@@ -103,10 +103,21 @@ do
 done
 echo ...done
 
-# make the image public
+# make the image public and deprecate old ones
 gcloud compute images add-iam-policy-binding ${INSTANCE_ID} \
   --member='allAuthenticatedUsers' \
   --role='roles/compute.imageUser'
+
+for image in $(gcloud compute images list --filter="name~'^slicermachine-.*'" | tail +1| cut -d' ' -f1)
+do
+  if [ ${image} != ${INSTANCE_ID} ]
+  then
+    echo Need to deprecate ${image}
+    gcloud compute images deprecate ${image} --state=DEPRECATED --replacement=${INSTANCE_ID}
+  else
+    echo ${image} is the current one
+  fi
+done
 
 
 make_image_end_time="$(date -u +%s)"
