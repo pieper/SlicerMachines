@@ -5,7 +5,8 @@ KEY=~/.ssh/${KEY_NAME}.pem
 
 
 UBUNTU_2004_IMAGE_ID=ami-0885b1f6bd170450c
-SLICER_EXTS="MarkupsToModel Auto3dgm SegmentEditorExtraEffects Sandbox SlicerIGT RawImageGuess SlicerDcm2nii SurfaceWrapSolidify SlicerMorph"
+#SLICER_EXTS="MarkupsToModel Auto3dgm SegmentEditorExtraEffects Sandbox SlicerIGT RawImageGuess SlicerDcm2nii SurfaceWrapSolidify SlicerMorph"
+SLICER_EXTS="SlicerDcm2nii UKFTractography SlicerDMRI"
 
 BUILD_DATE=$(date +%Ft%H-%I-%M)
 
@@ -28,7 +29,7 @@ INSTANCE_ID=$( \
     --associate-public-ip-address \
   | jq -r ".Instances[0].InstanceId")
 
-INSTANCE_NAME=SlicerMachine-${BUILD_DATE}
+INSTANCE_NAME=SlicerMachineImager-${BUILD_DATE}
 aws ec2 create-tags \
   --resources ${INSTANCE_ID} \
   --tags Key=Name,Value=${INSTANCE_NAME}
@@ -105,9 +106,10 @@ configure_end_time="$(date -u +%s)"
 configure_elapsed="$(($configure_end_time-$configure_start_time))"
 echo "Instance configured in $configure_elapsed seconds"
 
+${SSH} sudo shutdown -h now
 
 #
-# make the machine image
+# make the machine image and make it public
 #
 
 make_image_start_time="$(date -u +%s)"
@@ -131,6 +133,13 @@ do
   echo -n .
   sleep 1
 done
+
+aws ec2 modify-image-attribute \
+    --image-id ${SLICER_IMAGE_ID} \
+    --launch-permission "Add=[{Group=all}]"
+
+
+aws ec2 terminate-instances --instance-ids ${INSTANCE_ID}
 
 make_image_end_time="$(date -u +%s)"
 make_image_elapsed="$(($make_image_end_time-$make_image_start_time))"
