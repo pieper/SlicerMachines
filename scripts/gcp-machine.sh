@@ -46,6 +46,7 @@ status_end_time="$(date -u +%s)"
 status_elapsed="$(($status_end_time-$status_start_time))"
 echo "Instance started in $status_elapsed seconds"
 
+# find free port
 LOCAL_PORT=6080
 while nc -z localhost ${LOCAL_PORT}; do LOCAL_PORT=$((LOCAL_PORT+1)); done
 
