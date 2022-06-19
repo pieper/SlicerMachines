@@ -3,7 +3,7 @@
 # SLICER_EXTS="MarkupsToModel Auto3dgm SegmentEditorExtraEffects Sandbox SlicerIGT RawImageGuess SlicerDcm2nii SurfaceWrapSolidify SlicerMorph"
 SLICER_EXTS=""
 
-INSTANCE_ID=slicermachine-$(date +%Ft%H-%I-%M)
+INSTANCE_ID=slicermachine-$(date +%Ft%H-%M)
 SSH="gcloud compute ssh ${INSTANCE_ID} --"
 SCP="gcloud compute scp"
 SCPHOST=${INSTANCE_ID}

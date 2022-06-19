@@ -5,7 +5,7 @@ KEY=~/.ssh/${KEY_NAME}.pem
 
 INSTANCE_TYPE=g5.4xlarge
 
-BUILD_DATE=$(date +%Ft%H-%I-%M)
+BUILD_DATE=$(date +%Ft%H-%M)
 INSTANCE_ID=${USER}-slicermachine-$(date +%Ft%H-%M-%S)
 
 # get most recent image

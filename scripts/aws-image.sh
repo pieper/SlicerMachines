@@ -8,7 +8,7 @@ UBUNTU_2004_IMAGE_ID=ami-0885b1f6bd170450c
 #SLICER_EXTS="MarkupsToModel Auto3dgm SegmentEditorExtraEffects Sandbox SlicerIGT RawImageGuess SlicerDcm2nii SurfaceWrapSolidify SlicerMorph"
 SLICER_EXTS="SlicerDcm2nii UKFTractography SlicerDMRI"
 
-BUILD_DATE=$(date +%Ft%H-%I-%M)
+BUILD_DATE=$(date +%Ft%H-%M)
 
 
 echo "Creating new Slicer image based on ${UBUNTU_2004_IMAGE_ID}"
