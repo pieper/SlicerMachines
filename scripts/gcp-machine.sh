@@ -6,11 +6,17 @@ BILLING_PROJECT=idc-lnq-000
 
 # e.g.:
 # ACCELERATOR=type=nvidia-tesla-v100,count=2
-ACCELERATOR=type=nvidia-tesla-k80,count=1
+# MACHINE_TYPE=n1-standard-8
+#
+# ACCELERATOR=type=nvidia-tesla-k80,count=1
+# MACHINE_TYPE=n1-standard-8
+#
+ACCELERATOR=type=count=1,type=nvidia-tesla-a100
+MACHINE_TYPE=a2-highgpu-1g
 
-INSTANCE_ID=${USER}-slicermachine-$(date +%Ft%H-%I-%M)
+
+INSTANCE_ID=${USER}-slicermachine-$(date +%Ft%H-%M-%S)
 SSH="gcloud --project ${BILLING_PROJECT} compute ssh ${INSTANCE_ID} --"
-
 
 echo "Launching gcp instance ${INSTANCE_ID}"
 
@@ -23,7 +29,7 @@ status_start_time="$(date -u +%s)"
 gcloud compute --project ${BILLING_PROJECT} \
   instances create ${INSTANCE_ID} \
     --image-project=${IMAGE_PROJECT} --image-family=${IMAGE_FAMILY} \
-    --machine-type=n1-standard-8 \
+    --machine-type=${MACHINE_TYPE} \
     --accelerator=${ACCELERATOR} \
     --boot-disk-size=200GB --boot-disk-type=pd-ssd --maintenance-policy=TERMINATE
 
