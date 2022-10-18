@@ -15,6 +15,8 @@ via nvc.
 The result is an AMI in AWS that can be used as the boot image
 for a VM instance.
 
+`gcp-image` does the same thing for GCP.
+
 ## Use cases
 * Start up consistent GPU-enabled application environments
 * Set up consistent state for testing
